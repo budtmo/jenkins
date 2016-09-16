@@ -26,7 +26,7 @@ Quick Start
 	$docker run -d -p 8080:8080 --name jenkinscontainer -v $PWD/jenkins-workspace:/root/.jenkins butomo1989/jenkins
 	```
 
-4. Access <docker-ip-address>:8080 from your web browser.
+4. Access docker-ip-address:8080 from your web browser.
 
 	4.1. For linux user, you just need to access [localhost:8080] because your host ip-address is the same with docker ip-address
 
