@@ -1,8 +1,5 @@
 FROM butomo1989/ubuntu1604
 
-# Install open jdk
-RUN apt-get install openjdk-8-jdk -y 
-
 # Install jenkins LTS Release version
 RUN wget http://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war/2.7.4/jenkins-war-2.7.4.war
 
