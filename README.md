@@ -23,7 +23,7 @@ Quick Start
 3. Run the image and link jenkins-workspace directory with .jenkins directory that is located inside docker container
 
 	```bash
-	$docker run -d -p 8080:8080 --name jenkinscontainer -v $PWD/jenkins-workspace:/root/.jenkins butomo1989/jenkins
+	$docker run -d -p 1:1 -p 8080:8080 --name jenkins_master -v $PWD/jenkins-workspace:/root/.jenkins butomo1989/jenkins
 	```
 
 4. Access <docker-ip-address>:8080 from your web browser.
