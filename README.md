@@ -1,6 +1,8 @@
 Docker Jenkins
 ==============
-This project is about to run jenkins inside docker container in few simplest steps.
+This project is about to run jenkins and its node in docker solution with few simplest steps.
+
+[][Overview]
 
 Requirements
 ------------
@@ -42,15 +44,9 @@ Quick Start
 	$boot2docker ip
 	```
 
-If you run this docker-jenkins for the first time, please do this step to be able to create first admin account:
+**If you run this docker-jenkins for the first time, please do this step to be able to create first admin account:**
 
-5. Read and copy the initial admin password from jenkins-workspace/secrets/initialAdminPassword and paste it in the Getting started page
+Read and copy the initial admin password from jenkins-workspace/secrets/initialAdminPassword and paste it in the Getting started page
 
-	```bash
-	$cat jenkins-workspace/secrets/initialAdminPassword
-	```
-
-	![][InitialAdminPassword]
-
-[InitialAdminPassword]: <img/InitialAdminPassword.png> "Paste the password here"
-[localhost:8080]: <http:localhost:8080>
+[Overview]: <img/Overview.png> "Jenkins and its node in docker solution"
+[localhost:8080]: <http://localhost:8080>
