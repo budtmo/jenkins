@@ -1,0 +1,12 @@
+FROM butomo1989/ubuntu1604
+
+# Download slave.jar
+ARG JENKINS_URL=127.0.0.1
+RUN wget $JENKINS_URL/jnlpJars/slave.jar
+ENV JENKINS_URL=$JENKINS_URL
+
+# Install python
+RUN apt-get install python python3 -y
+
+# Connect with jenkins master
+CMD java -jar slave.jar -jnlpUrl $JENKINS_URL/computer/$NODE/slave-agent.jnlp -jnlpCredentials $USER:$PASSWORD
