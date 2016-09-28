@@ -1,0 +1,22 @@
+version: '2'
+services:
+  python:
+    build: 
+      context: example
+      dockerfile: $PWD/example/PythonNode
+      args:
+        JENKINS_URL: $JENKINS_MASTER
+    environment:
+      - NODE=python_node
+      - USER=butomo
+      - PASSWORD=secr3t
+  ruby:
+    build: 
+      context: example
+      dockerfile: $PWD/example/RubyNode
+      args:
+        JENKINS_URL: $JENKINS_MASTER
+    environment:
+      - NODE=ruby_node
+      - USER=butomo
+      - PASSWORD=secr3t
