@@ -4,7 +4,8 @@ Use docker container as jenkins node.
 
 Requirements
 ------------
-Enable Port **1** in option **TCP port for JNLP agents**
+1. Enable Port **1** in option **TCP port for JNLP agents**
+2. Dummy node is created in jenkins
 
 Quick Start
 -----------
