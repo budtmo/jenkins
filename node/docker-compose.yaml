@@ -20,3 +20,9 @@ services:
       - NODE=ruby_node
       - USER=butomo
       - PASSWORD=secr3t
+  android4.1.2:
+    image: butomo1989/androidemulator_4.1.2:0.1
+    environment:
+      - NODE=android4.1.2_node
+      - USER=butomo
+      - PASSWORD=secr3t
