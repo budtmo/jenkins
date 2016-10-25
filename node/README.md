@@ -33,4 +33,8 @@ Quick Start
 	$docker run -d --name python_node -e NODE=python_node -e USER=butomo -e PASSWORD=secr3t docker_python
 	```
 
+P.S. To use mobile emulator you can check this repo [mobile-emulator].
+
 Build your own custom node! 
+
+[mobile-emulator]: <https://github.com/butomo1989/mobile-emulator>
