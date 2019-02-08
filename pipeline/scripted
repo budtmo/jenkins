@@ -16,6 +16,10 @@ parameters = [
 	)
 ]
 
+properties([
+	parameters(parameters)
+])
+
 node {
 	echo "Reload: ${params.RELOAD}, Node: ${params.NODE}, Build label: ${params.LABEL}"
 
