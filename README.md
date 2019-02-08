@@ -1,52 +1,59 @@
 Docker Jenkins
 ==============
-This project is about to run jenkins and its node in docker solution with few simplest steps.
-
-![][Overview]
+This project shows how to run Jenkins master and slave(s) in Docker solution.
 
 Requirements
 ------------
-Docker is installed in host system.
+1. Docker
 
-Quick Start
------------
-1. Pull the newest docker-jenkins image
+Start Jenkins Master
+--------------------
+1. Run Jenkins machine through docker-compose
 	
 	```bash
-	$docker pull butomo1989/jenkins
+	$docker-compose up
 	```
 
-2. Create a folder in current directory (example name: jenkins-workspace)
-	
-	```bash
-	$mkdir jenkins-workspace
-	```
-
-3. Run the image and link jenkins-workspace directory with .jenkins directory that is located inside docker container
-
-	```bash
-	$docker run -d -p 1:1 -p 8080:8080 --name jenkins_master -v $PWD/jenkins-workspace:/root/.jenkins butomo1989/jenkins
-	```
-
-4. Access docker-ip-address:8080 from your web browser.
-
-	4.1. For linux user, you just need to access [localhost:8080] because your host ip-address is the same with docker ip-address
-
-	4.2. For docker-machine user, to find ip address of your docker machine you can use the command:
-
-	```bash
-	$docker-machine ip <name_of_activated_docker_machine>
-	```
-
-	4.3. For boot2docker user, to find ip address you can use the command:
-
-	```bash
-	$boot2docker ip
-	```
+2. Access <docker-host-ip>:8080 from your web browser.
 
 **If you run this docker-jenkins for the first time, please do this step to be able to create first admin account:**
 
-Read and copy the initial admin password from jenkins-workspace/secrets/initialAdminPassword and paste it in the Getting started page
+Read and copy the initial admin password from the logs and paste it in the Getting started page
 
-[Overview]: <img/Overview.png> "Jenkins and its node in docker solution"
-[localhost:8080]: <http://localhost:8080>
+Connect Jenkins Node
+--------------------
+
+You are able to have a Jenkins slave(s) / node(s) on demand.
+
+1. Enable Docker Engine API on the machine which has Docker installed. 
+
+2. Install [Docker plugin](http://wiki.jenkins-ci.org/display/JENKINS/Docker+Plugin) in Jenkins (under Manage Jenkins -> Manage Plugins)
+
+3. Configure the connection between slave and Docker (under Manage Jenkins -> Configure System -> Cloud). Sample config:
+
+	```bash
+	Name: slave1
+	Docker Host URI: tcp://xxx.xxx.xxx.xxx:xxx
+	Enabled: true
+	```
+
+4. Configure Docker agent template in the same page. Sample config:
+	
+	```bash
+	Label: java
+	Enabled: true
+	Name: docker-openjdk
+	DockerImage: openjdk
+	Connect method: Attach Docker container
+	Pull strategy: Pull all images every time
+	```
+
+5. Based on above configuration, you can create a job with option "Restrict where this project can be run: java"
+
+
+Additional information
+----------------------
+
+1. [List of Docker images](node) that can be used as Jenkins slave / node
+
+2. [Sample of using in Jenkins pipeline](pipeline)

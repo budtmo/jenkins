@@ -1,0 +1,12 @@
+version: "2.2"
+
+services:
+  # Jenkins Master
+  jenkins_master:
+    image: jenkins/jenkins:lts
+    ports:
+      - 8080:8080
+      - 50000:50000
+    #Optional in case you want to store the data
+    volumes:
+      - $PWD/jenkins_home:/var/jenkins_home
