@@ -1,3 +1,4 @@
+#!/usr/bin/groovy
 parameters = [
 	booleanParam(
 		defaultValue: false,
