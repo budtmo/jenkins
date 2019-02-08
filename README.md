@@ -29,7 +29,7 @@ You are able to have a Jenkins slave(s) / node(s) on demand.
 
 2. Install [Docker plugin](http://wiki.jenkins-ci.org/display/JENKINS/Docker+Plugin) in Jenkins (under Manage Jenkins -> Manage Plugins)
 
-3. Configure the connection between slave and Docker (under Manage Jenkins -> Configure System -> Cloud). Sample config:
+3. Configure the connection between slave and Docker (under Manage Jenkins -> Configure System -> Cloud). Sample configuration:
 
 	```bash
 	Name: slave1
@@ -37,7 +37,7 @@ You are able to have a Jenkins slave(s) / node(s) on demand.
 	Enabled: true
 	```
 
-4. Configure Docker agent template in the same page. Sample config:
+4. Configure Docker agent template in the same page. Sample configuration:
 	
 	```bash
 	Label: java

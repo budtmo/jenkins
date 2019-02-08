@@ -1,6 +1,7 @@
 List of Docker images
 =====================
 
-1. Java: openjdk
-2. Python: 
-3. Ruby: 
+|Language   |Image   |Size   |
+:---|:---|:---|
+|Java|openjdk|[![](https://images.microbadger.com/badges/image/openjdk.svg)](https://microbadger.com/images/openjdk "Get your own image badge on microbadger.com")|
+|Python|budtmo/python:3.7|[![](https://images.microbadger.com/badges/image/budtmo/python.svg)](https://microbadger.com/images/budtmo/python "Get your own image badge on microbadger.com")|
