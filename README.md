@@ -14,7 +14,7 @@ Start Jenkins Master
 	$docker-compose up
 	```
 
-2. Access <docker-host-ip>:8080 from your web browser.
+2. Open ***http://docker-host-ip-address:8080*** from web browser.
 
 **If you run this docker-jenkins for the first time, please do this step to be able to create first admin account:**
 
