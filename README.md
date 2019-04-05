@@ -25,7 +25,7 @@ Connect Jenkins Node
 
 You are able to have a Jenkins slave(s) / node(s) on demand.
 
-1. Enable Docker Engine API on the machine which has Docker installed. 
+1. Enable Docker Engine API on the machine which has Docker installed. Example steps on Ubuntu 16.04:
 
 	```bash
 	sudo nano /lib/systemd/system/docker.service
