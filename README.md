@@ -27,6 +27,14 @@ You are able to have a Jenkins slave(s) / node(s) on demand.
 
 1. Enable Docker Engine API on the machine which has Docker installed. 
 
+	```bash
+	sudo nano /lib/systemd/system/docker.service
+	Replace with -> ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:4243
+	sudo systemctl daemon-reload
+	sudo systemctl restart docker
+	curl http://localhost:4243/version
+	```
+
 2. Install [Docker plugin](http://wiki.jenkins-ci.org/display/JENKINS/Docker+Plugin) in Jenkins (under Manage Jenkins -> Manage Plugins)
 
 3. Configure the connection between slave and Docker (under Manage Jenkins -> Configure System -> Cloud). Sample configuration:
