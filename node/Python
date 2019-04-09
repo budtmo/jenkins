@@ -13,8 +13,8 @@ FROM ubuntu:18.04
 #   Transfer data from or to a server
 # wget
 #   Network downloader
-# git
-#   Distributed control system
+# open-ssh
+#   Connectivity tool
 #==================
 RUN apt-get -qqy update && \
     apt-get -qqy --no-install-recommends install \
@@ -24,6 +24,7 @@ RUN apt-get -qqy update && \
     curl \
     wget \
     git \
+    open-ssh
   && rm -rf /var/lib/apt/lists/*
 
 #================
@@ -31,7 +32,7 @@ RUN apt-get -qqy update && \
 #================
 RUN apt-get -qqy update && \
   apt-get -qqy --no-install-recommends install \
-  python3.7-dev python3-pip python3-setuptools python3-wheel gcc \
+  python3-dev python3.7-dev python3-pip python3-setuptools python3-wheel gcc \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && update-alternatives --install /usr/bin/python python /usr/bin/python3 1 \
@@ -46,6 +47,6 @@ ENV LANG=C.UTF-8
 #====================
 # Create home folder
 #====================
-RUN mkdir -p /jenkins_home && chmod 777 -R /jenkins_home
+RUN mkdir -p /jenkins_home/workspace && chmod 777 -R /jenkins_home
 
 CMD python3
