@@ -1,0 +1,17 @@
+sudo: false
+
+services:
+  - docker
+
+language: bash
+
+before_install:
+  - docker -v
+
+script:
+  - docker build -t "budtmo/python:3.7" -f node/Python node
+  - docker images
+
+after_success:
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - docker push "budtmo/python:3.7"
