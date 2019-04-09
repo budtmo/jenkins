@@ -13,6 +13,8 @@ FROM ubuntu:18.04
 #   Transfer data from or to a server
 # wget
 #   Network downloader
+# git
+#   Distributed control system
 #==================
 RUN apt-get -qqy update && \
     apt-get -qqy --no-install-recommends install \
@@ -21,14 +23,15 @@ RUN apt-get -qqy update && \
     unzip \
     curl \
     wget \
+    git \
   && rm -rf /var/lib/apt/lists/*
 
 #================
 # Install Python
 #================
 RUN apt-get -qqy update && \
-	apt-get -qqy --no-install-recommends install \
-	python3.7-dev python3-pip python3-setuptools python3-wheel gcc \
+  apt-get -qqy --no-install-recommends install \
+  python3.7-dev python3-pip python3-setuptools python3-wheel gcc \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && update-alternatives --install /usr/bin/python python /usr/bin/python3 1 \
@@ -39,5 +42,10 @@ RUN apt-get -qqy update && \
 #============
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
+
+#====================
+# Create home folder
+#====================
+RUN mkdir -p /var/jenkins_home
 
 CMD python3
