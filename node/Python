@@ -24,7 +24,7 @@ RUN apt-get -qqy update && \
     curl \
     wget \
     git \
-    open-ssh
+    open-ssh \
   && rm -rf /var/lib/apt/lists/*
 
 #================
