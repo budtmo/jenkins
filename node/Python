@@ -46,6 +46,6 @@ ENV LANG=C.UTF-8
 #====================
 # Create home folder
 #====================
-RUN mkdir -p /var/jenkins_home && chmod a+x -R /var/jenkins_home
+RUN mkdir -p /jenkins_home && chmod 777 -R /jenkins_home
 
 CMD python3
