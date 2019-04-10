@@ -44,9 +44,4 @@ RUN apt-get -qqy update && \
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-#====================
-# Create home folder
-#====================
-RUN mkdir -p /jenkins_home/workspace && chmod 777 -R /jenkins_home
-
 CMD python3
