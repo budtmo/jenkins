@@ -1,0 +1,93 @@
+#!/usr/bin/groovy
+
+parameters = [
+	booleanParam(
+		defaultValue: false,
+		description: 'Reload Jenkinsfile',
+		name: 'RELOAD'
+	),
+	booleanParam(
+		defaultValue: true,
+		description: 'Clean up machine from GROUP 1',
+		name: 'GROUP1'
+	),
+	booleanParam(
+		defaultValue: true,
+		description: 'Clean up machines from GROUP 2',
+		name: 'GROUP2'
+	)
+]
+
+properties([
+	parameters(parameters),
+	pipelineTriggers([cron('H 10 * * *')]),
+])
+
+timestamps {
+	node('master') {
+		println "Reload: ${params.RELOAD}, Clean up GROUP 1: ${params.GROUP1}, Clean up GROUP 2: ${params.GROUP2}"
+
+		def reloadOnly = params.RELOAD || currentBuild.number == 1
+		if (reloadOnly) {
+			currentBuild.displayName = "Reload Jenkinsfile"
+			return
+		}
+
+		def label = "mylabel"
+	    println "Given label: $label"
+	    
+	    for ( def attempt = 1; attempt <= 3; attempt++ ) {
+	        println "Attempt: $attempt"
+	        if (isReadyToBeCleanedUp(nodeNames(label))) {
+	            println "Clean Up processes are started! [GROUP1=${params.GROUP1} and GROUP2=${params.GROUP2}]"
+	            if (params.GROUP1) {
+		              sh './script1.sh'
+		          }
+		
+		          if (params.GROUP2) {
+	                sh './script2.sh'
+	            }
+	            
+	            println "Clean Up processes are done!"
+	            break
+	        } else {
+	            if (attempt == 3) {
+	                println "Clean Up processes are cancelled with $attempt attempts! It might be because one of the machine is stil used!"    
+	            } else {
+	                println "Will check again in 10 seconds"
+	                sh 'sleep 10'
+	            }
+	        }
+	    }
+	}
+}
+
+def nodeNames(label) {
+    def nodes = []
+    jenkins.model.Jenkins.instance.computers.each { c ->
+        if (c.node.labelString.contains(label)) {
+            nodes.add(c.node.selfLabel.name)
+        }
+    }
+    println "List of nodes: $nodes"
+    return nodes
+}
+
+def isReadyToBeCleanedUp(nodes) {
+    def isReady = false
+    for (n in nodes) {
+        println "Checking $n"
+        def selectedNode = Hudson.instance.slaves.find({it.name == n})
+        
+        def numOfCurrentTask = selectedNode.getComputer().countBusy()
+        println "Number of current task: $numOfCurrentTask"
+        if (numOfCurrentTask == 0) {
+            isReady = true
+        } else {
+            println "One of the nodes is busy!"
+            return false
+        }
+    }
+    println "All nodes are scanned! is it ready to be cleaned up now? $isReady"
+    return isReady
+}
