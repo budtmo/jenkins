@@ -3,8 +3,6 @@ FROM ubuntu:18.04
 #==================
 # General Packages
 #------------------
-# openjdk-8-jdk
-#   Java to be able to connect to Jenkins master
 # ca-certificates
 #   SSL client
 # unzip
@@ -18,13 +16,26 @@ FROM ubuntu:18.04
 #==================
 RUN apt-get -qqy update && \
     apt-get -qqy --no-install-recommends install \
-    openjdk-8-jdk \
+    gnupg \
     ca-certificates \
     unzip \
     curl \
     wget \
     git \
     openssh-client \
+  && rm -rf /var/lib/apt/lists/*
+
+#===========
+# Java Zulu
+#-----------
+# zulu-8
+#   Java Zulu to be able to connect to Jenkins master
+#===========
+RUN apt-get -qqy update && \ 
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0xB1998361219BD9C9 && \ 
+    echo 'deb http://repos.azulsystems.com/debian stable main' > /etc/apt/sources.list.d/zulu.list && \ 
+    apt-get -qqy update && \ 
+    apt-get -qqy --no-install-recommends install zulu-8 \ 
   && rm -rf /var/lib/apt/lists/*
 
 #================
