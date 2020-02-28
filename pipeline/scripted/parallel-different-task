@@ -37,7 +37,7 @@ timestamps {
 						echo "this build is run on docker-java"
 						sh 'sleep 10'
 						def ip = sh(script: 'hostname -i', returnStdout:true).trim()
-	    				echo "IP: ${ip}"
+						echo "IP: ${ip}"
 					}
 				},
 				"task2": {
@@ -45,7 +45,7 @@ timestamps {
 						echo "this build is run on docker-python"
 						sh 'sleep 10'
 						def ip = sh(script: 'hostname -i', returnStdout:true).trim()
-	    				echo "IP: ${ip}"
+						echo "IP: ${ip}"
 					}
 				}
 			)

@@ -40,9 +40,9 @@ timestamps {
 				builders[label] = {
 					node(label) {
 						stage("Node information - ${label}") {
-				    		def ip = sh(script: 'hostname -i', returnStdout:true).trim()
-				    		echo "IP: ${ip}"
-				    	}
+							def ip = sh(script: 'hostname -i', returnStdout:true).trim()
+							echo "IP: ${ip}"
+						}
 					}
 				}
 			}

@@ -35,15 +35,15 @@ timestamps {
 			currentBuild.displayName = "${params.LABEL}"
 		}
 
-	    node("${params.NODE}") {
-	    	stage("Node information") {
-	    		def ip = sh(script: 'hostname -i', returnStdout:true).trim()
-	    		echo "IP: ${ip}"
+		node("${params.NODE}") {
+			stage("Node information") {
+				def ip = sh(script: 'hostname -i', returnStdout:true).trim()
+				echo "IP: ${ip}"
 	    	}
-	    	stage("detect Programming language") {
-	    		def output = sh(script: '${NODE} -h', returnStdout:true).trim()
-	    		echo "${output}"
-	    	}
-	    }
+			stage("detect Programming language") {
+				def output = sh(script: '${NODE} -h', returnStdout:true).trim()
+				echo "${output}"
+			}
+		}
 	}	
 }
