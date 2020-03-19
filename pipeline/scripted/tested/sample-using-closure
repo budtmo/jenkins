@@ -1,0 +1,56 @@
+#!/usr/bin/groovy
+parameters = [
+	booleanParam(
+		defaultValue: false,
+		description: 'Reload Jenkinsfile',
+		name: 'RELOAD'
+	),
+	choice(
+		choices: 'java\npython',
+		description: 'Available node',
+		name: 'NODE'
+	),
+	string(
+		defaultValue: '',
+		description: 'Custom label for job build',
+		name: 'LABEL'
+	)
+]
+
+properties([
+	parameters(parameters.collect().flatten())
+])
+
+timestamps {
+	node {
+		echo "Reload: ${params.RELOAD}, Node: ${params.NODE}, Build label: ${params.LABEL}"
+
+		def reloadOnly = params.RELOAD || currentBuild.number == 1
+		if (reloadOnly) {
+			currentBuild.displayName = "Reload Jenkinsfile"
+			return
+		}
+
+		if (params.LABEL) {
+			currentBuild.displayName = "${params.LABEL}"
+		}
+
+		def selectedNode = params.NODE
+		node("${selectedNode}") {
+			stage("Checking the node") {
+				checkSomething("myString") {
+					if (selectedNode == "java") {
+						echo "This is java node"
+					} else {
+						echo "This is python node"
+					}
+				}
+	    	}
+		}
+	}	
+}
+
+def checkSomething(String param1, Closure body) {
+	echo "check something here before it goes to if else statement, e.g. $param1"
+	body()
+}
