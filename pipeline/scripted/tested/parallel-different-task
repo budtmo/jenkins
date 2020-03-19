@@ -31,22 +31,22 @@ timestamps {
 		}
 
 		stage("Parallel run") {
-			def labels = ['java', 'python']
-			def builders = [:]
-
-			for (l in labels) {
-				def label = l //Need to bind in variable
-
-				builders[label] = {
-					node(label) {
-						stage("Node information - ${label}") {
-							def ip = sh(script: 'hostname -i', returnStdout:true).trim()
-							echo "IP: ${ip}"
-						}
+			parallel(
+				"task1": {
+					node("java") {
+						echo "this build is run on docker-java"
+						def output = sh(script: 'printenv | grep NODE_NAME', returnStdout:true).trim()
+						echo "Output: ${output}"
+					}
+				},
+				"task2": {
+					node("python") {
+						echo "this build is run on docker-python"
+						def output = sh(script: 'printenv | grep NODE_LABELS', returnStdout:true).trim()
+						echo "Output: ${output}"
 					}
 				}
-			}
-			parallel builders
+			)
 		}
 	}
 }

@@ -37,8 +37,8 @@ timestamps {
 
 		node("${params.NODE}") {
 			stage("Node information") {
-				def ip = sh(script: 'hostname -i', returnStdout:true).trim()
-				echo "IP: ${ip}"
+				def output = sh(script: 'printenv | grep NODE_NAME', returnStdout:true).trim()
+				echo "Output: ${output}"
 	    	}
 			stage("detect Programming language") {
 				def output = sh(script: '${NODE} -h', returnStdout:true).trim()

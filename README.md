@@ -40,7 +40,7 @@ You are able to have a Jenkins slave(s) / node(s) on demand.
 3. Configure the connection between slave and Docker (under Manage Jenkins -> Configure System -> Cloud). Sample configuration:
 
 	```bash
-	Name: slave1
+	Name: cloud1
 	Docker Host URI: tcp://xxx.xxx.xxx.xxx:xxx
 	Enabled: true
 	```

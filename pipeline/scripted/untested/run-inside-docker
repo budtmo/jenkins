@@ -1,4 +1,6 @@
 #!/usr/bin/groovy
+# NOTE: YOU NEED TO RUN IT OUTSIDE DOCKER_CONTAINER OF MASTER!
+
 parameters = [
 	booleanParam(
 		defaultValue: false,
@@ -31,13 +33,14 @@ timestamps {
 		}
 
 		node("master") {
-			docker.image("budtmo/python:3.7").inside(--privileged --network host -p 8080:8080) { c->
+			docker.image('budtmo/python:3.7').inside('--privileged --name docker-slave --network host -p 8000:8000 -e ENV1=SOMETHING') { c->
 				stage("Node information") {
-					def ip = sh(script: 'hostname -i', returnStdout:true).trim()
-					echo "IP: ${ip}"
+					def output = sh(script: 'printenv | grep NODE_NAME', returnStdout:true).trim()
+					echo "Output: ${output}"
 				}
-		    	stage("additional step") {
-					sh 'echo todo'
+		    	stage("read environment variable") {
+					def output = sh(script: 'printenv | grep ENV1', returnStdout:true).trim()
+					echo "Output: ${output}"
 				}
 			}
 		}
