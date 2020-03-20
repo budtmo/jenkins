@@ -9,11 +9,6 @@ parameters = [
 		choices: 'java\npython',
 		description: 'Available node',
 		name: 'NODE'
-	),
-	string(
-		defaultValue: '',
-		description: 'Custom label for job build',
-		name: 'LABEL'
 	)
 ]
 
@@ -29,10 +24,6 @@ timestamps {
 		if (reloadOnly) {
 			currentBuild.displayName = "Reload Jenkinsfile"
 			return
-		}
-
-		if (params.LABEL) {
-			currentBuild.displayName = "${params.LABEL}"
 		}
 
 		def selectedNode = params.NODE
