@@ -20,10 +20,10 @@ Start Jenkins Master
 
 Read and copy the initial admin password from the logs and paste it in the Getting started page
 
-Connect Jenkins Node
---------------------
+Jenkins node by demand with docker
+----------------------------------
 
-You are able to have a Jenkins slave(s) / node(s) on demand.
+You are able to have a Jenkins slave(s) / node(s) on demand through docker.
 
 1. Enable Docker Engine API on the machine which has Docker installed. Example steps on Ubuntu 16.04:
 
