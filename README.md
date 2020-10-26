@@ -37,7 +37,7 @@ You are able to have a Jenkins slave(s) / node(s) on demand through docker.
 
 2. Install [Docker plugin](http://wiki.jenkins-ci.org/display/JENKINS/Docker+Plugin) in Jenkins (under Manage Jenkins -> Manage Plugins)
 
-3. Configure the connection between slave and Docker (under Manage Jenkins -> Configure System -> Cloud). Sample configuration:
+3. Configure the connection between jenkins master and Docker machine (under Manage Jenkins -> Configure System -> Cloud). Sample configuration:
 
 	```bash
 	Name: cloud1
@@ -57,6 +57,66 @@ You are able to have a Jenkins slave(s) / node(s) on demand through docker.
 	```
 
 5. Based on above configuration, you can create a job with option "Restrict where this project can be run: java"
+
+Jenkins node by demand with kubernetes
+--------------------------------------
+
+You are able to have a Jenkins slave(s) / node(s) on demand through kubernetes but you need to have kubernetes cluster ready before.
+
+1. You need to create jenkins namespace and needed components like ServiceAccount and ClusterRoleBinding (run the following command on k8s master node), the tutorial can be found [here](https://stackoverflow.com/questions/58401919/kubernetes-jenkins-plugin-forbidden-user-systemanonymous-cannot-list-res) and copy the secret text for step 4:
+	
+	```
+	kubectl create namespace jenkins && kubectl create serviceaccount jenkins --namespace=jenkins && kubectl describe secret $(kubectl describe serviceaccount jenkins --namespace=jenkins | grep Token | awk '{print $2}') --namespace=jenkins && kubectl create rolebinding jenkins-admin-binding --clusterrole=admin --serviceaccount=jenkins:jenkins --namespace=jenkins
+	```
+
+2. Get the url of kubernetes master (you need to run the command on k8s master node): 
+
+	```
+	kubectl cluster-info
+	```
+
+3. Install [Kubernetes plugin](https://plugins.jenkins.io/kubernetes/)
+
+4. Create secret text by going to manage jenkins -> manage credentials -> press one item of the "store" e.g. "jenkins" -> "global credentials" -> "add credentials" -> choose "system" and paste the output from step 1 to "secret" field
+
+5. Configure the connection between jenkins master and kubernetes cluster (under Manage Jenkins -> Configure System -> Cloud). Sample configuration:
+	
+	```
+	Name: team-k8s
+	Kubernetes cluster: https://xx.xx.xx.xx:6443 (you get this from step 2)
+	Disable https certificate check: marked
+	Kubernetes Namespace: jenkins
+	Credentials: xxx (choose the credentials id from step 4)
+	Direct Connection: marked
+
+	and press "Test Connection"
+
+	```
+
+6. Continue to configure the Pod template (it is on the same page) if the connection is successfull:
+
+	```
+	Name: k8s-java-openjdk
+	Namespace: jenkins
+	Label: k8s-java-pod
+	Containers:
+		Name: k8s-java-container
+		Docker image: openjdk
+	Node Selector: node1
+	```
+
+7. On pipeline script you need to specify the node and the container name, example:
+
+	```
+	node('k8s-java-pod') {
+		// do something if needed
+
+		conainer('k8s-java-container') {
+			// do something here
+		}
+	}
+	```
+
 
 
 Additional information
