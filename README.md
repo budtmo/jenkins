@@ -63,29 +63,36 @@ Jenkins node by demand with kubernetes
 
 You are able to have a Jenkins slave(s) / node(s) on demand through kubernetes but you need to have kubernetes cluster ready before.
 
-1. You need to create jenkins namespace and needed components like ServiceAccount and ClusterRoleBinding (run the following command on k8s master node), the tutorial can be found [here](https://stackoverflow.com/questions/58401919/kubernetes-jenkins-plugin-forbidden-user-systemanonymous-cannot-list-res) and copy the secret text for step 4:
+1. You need to create jenkins namespace and needed components like ServiceAccount and RoleBinding (run the following command on k8s master node), you need to run [jenkins-cluster.yml](jenkins-cluster.yml)
 	
 	```
-	kubectl create namespace jenkins && kubectl create serviceaccount jenkins --namespace=jenkins && kubectl describe secret $(kubectl describe serviceaccount jenkins --namespace=jenkins | grep Token | awk '{print $2}') --namespace=jenkins && kubectl create rolebinding jenkins-admin-binding --clusterrole=admin --serviceaccount=jenkins:jenkins --namespace=jenkins
+	kubectl apply -f my-jenkins.yml
 	```
 
-2. Get the url of kubernetes master (you need to run the command on k8s master node): 
+
+2. Copy token of created service account:
+	
+	```
+	kubectl describe secret $(kubectl describe serviceaccount jenkins-user --namespace=jenkins-cluster | grep Token | awk '{print $2}') --namespace=jenkins-cluster
+	```
+
+3. Get the url of kubernetes master (you need to run the command on k8s master node): 
 
 	```
 	kubectl cluster-info
 	```
 
-3. Install [Kubernetes plugin](https://plugins.jenkins.io/kubernetes/)
+4. Install [Kubernetes plugin](https://plugins.jenkins.io/kubernetes/)
 
-4. Create secret text by going to manage jenkins -> manage credentials -> press one item of the "store" e.g. "jenkins" -> "global credentials" -> "add credentials" -> choose "system" and paste the output from step 1 to "secret" field
+5. Create secret text by going to manage jenkins -> manage credentials -> press one item of the "store" e.g. "jenkins" -> "global credentials" -> "add credentials" -> choose "system" and paste the output from step 2 to "secret" field
 
-5. Configure the connection between jenkins master and kubernetes cluster (under Manage Jenkins -> Configure System -> Cloud). Sample configuration:
+6. Configure the connection between jenkins master and kubernetes cluster (under Manage Jenkins -> Configure System -> Cloud). Sample configuration:
 	
 	```
 	Name: team-k8s
 	Kubernetes cluster: https://xx.xx.xx.xx:6443 (you get this from step 2)
 	Disable https certificate check: marked
-	Kubernetes Namespace: jenkins
+	Kubernetes Namespace: jenkins-cluster
 	Credentials: xxx (choose the credentials id from step 4)
 	Direct Connection: marked
 
@@ -93,11 +100,11 @@ You are able to have a Jenkins slave(s) / node(s) on demand through kubernetes b
 
 	```
 
-6. Continue to configure the Pod template (it is on the same page) if the connection is successfull:
+7. Continue to configure the Pod template (it is on the same page) if the connection is successfull:
 
 	```
 	Name: k8s-java-openjdk
-	Namespace: jenkins
+	Namespace: jenkins-cluster
 	Label: k8s-java-pod
 	Containers:
 		Name: k8s-java-container
@@ -105,7 +112,7 @@ You are able to have a Jenkins slave(s) / node(s) on demand through kubernetes b
 	Node Selector: node1
 	```
 
-7. On pipeline script you need to specify the node and the container name, example:
+8. On pipeline script you need to specify the node and the container name, example:
 
 	```
 	node('k8s-java-pod') {
