@@ -1,0 +1,53 @@
+#!/usr/bin/groovy
+
+/**
+ * Add this repo to Jenkins setting first -> https://github.com/budtmo/jenkins-shared-library
+ */
+
+ @Library("test-library") _
+
+parameters = [
+	booleanParam(
+		defaultValue: false,
+		description: 'Reload Jenkinsfile',
+		name: 'RELOAD'
+	)
+]
+
+properties([
+	parameters(parameters)
+])
+
+timestamps {
+	node {
+		echo "Reload: ${params.RELOAD}"
+
+		def reloadOnly = params.RELOAD || currentBuild.number == 1
+		if (reloadOnly) {
+			currentBuild.displayName = "Reload Jenkinsfile"
+			return
+		}
+		
+		def f = new Foo(this)
+		f.printInfo("test")
+		
+		def b = new org.op.Bar(this)
+		b.printInfo("test")
+		
+        log.print("test")
+        printout "test"
+
+		node("python") {
+			stage("Step 1") {
+				def output = sh(script: 'uname', returnStdout:true).trim()
+                log.print(output)
+                printout output
+	    	}
+			stage("Step 2") {
+				def output = sh(script: 'python --version', returnStdout:true).trim()
+				f.printInfo(output)
+				b.printInfo(output)
+			}
+		}
+	}	
+}
