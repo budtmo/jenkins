@@ -2,9 +2,10 @@
 
 /**
  * Add this repo to Jenkins setting first -> https://github.com/budtmo/jenkins-shared-library
+ * Add @xxx if you want to use custom branch (in this case: master), remove it if you want to use the default branch (master)
  */
 
- @Library("test-library") _
+ @Library("test-library@master") _
 
 parameters = [
 	booleanParam(
