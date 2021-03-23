@@ -29,24 +29,23 @@ timestamps {
 			return
 		}
 		
-		def f = new Foo(this)
-		f.printInfo("test")
+		def f = new Foo("foo1")
+		log.printFooName(f)
+
+		def b = new org.op.Bar(this, new Foo("foo2"))
+		b.printInfo("just a message")
+		log.printMessage(b.getFoo().getName())
 		
-		def b = new org.op.Bar(this)
-		b.printInfo("test")
-		
-        log.print("test")
         printout "test"
 
 		node("python") {
 			stage("Step 1") {
 				def output = sh(script: 'uname', returnStdout:true).trim()
-                log.print(output)
+                log.printMessage(output)
                 printout output
 	    	}
 			stage("Step 2") {
 				def output = sh(script: 'python --version', returnStdout:true).trim()
-				f.printInfo(output)
 				b.printInfo(output)
 			}
 		}
