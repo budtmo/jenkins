@@ -109,6 +109,8 @@ You are able to have a Jenkins slave(s) / node(s) on demand through kubernetes b
 	Containers:
 		Name: k8s-java-container
 		Docker image: openjdk
+	ImagePullSecrets:
+		Name: xxx (optional)
 	Node Selector: node1
 	```
 
