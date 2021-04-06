@@ -111,7 +111,7 @@ You are able to have a Jenkins slave(s) / node(s) on demand through kubernetes b
 		Docker image: openjdk
 	ImagePullSecrets:
 		Name: xxx (optional)
-	Node Selector: node1
+	Node Selector: kubernetes.io/hostname=node1 -> you can get through kubectl get node --show-labels
 	```
 
 8. On pipeline script you need to specify the node and the container name, example:
