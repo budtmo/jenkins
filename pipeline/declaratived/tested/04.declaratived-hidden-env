@@ -1,0 +1,95 @@
+#!/usr/bin/groovy
+
+/**
+ * You need to add credential first before using this script
+ * 
+ * Steps:
+ * 		1. Login to jenkins
+ * 		2. Press Credentials (on the left menu bar)
+ * 		3. Add credentials by pressing one of the items
+ * 		4. Fill out the information, e.g.
+ * 				- Kind: Username with password
+ * 				- Scope: Global
+ *				- Username: test
+ *				- Password: secr3t
+ *				- ID: my-secret
+ * 				- Description: this is an example
+ */
+
+pipeline {
+	agent none
+
+	parameters {
+		booleanParam(
+			defaultValue: false,
+			description: 'Reload Jenkinsfile',
+			name: 'RELOAD'
+		)
+	}
+
+	options {
+		timestamps()
+	}
+
+	stages {
+		stage("Initial") {
+			steps {
+				script {
+					echo "Reload: ${params.RELOAD}"
+
+					def reloadOnly = params.RELOAD || currentBuild.number == 1
+					if (reloadOnly) {
+						currentBuild.displayName = "Reload Jenkinsfile"
+					}
+				}
+			}
+		}
+		
+		stage("Build") {
+			when {
+				beforeAgent true;
+				expression { !params.RELOAD.toBoolean() }
+			}
+
+			agent { label "python"}
+
+			environment {
+    			MYSECRET_CREDS = credentials('my-secret')
+			}
+
+			stages {
+				stage("Get secret") {
+					steps {
+						script {
+							echo "${MYSECRET_CREDS_USR}"
+							echo "${MYSECRET_CREDS_PSW}"
+						}
+					}
+				}
+			}
+    	}
+	}
+
+	post {
+		always {
+			script {
+				echo "Send notification"
+			}
+		}
+		success {
+			script {
+				echo "Success"
+			}
+		}
+		failure {
+			script {
+				echo "Failure"
+			}
+		}
+		unstable {
+			script {
+				echo "Unstable"
+			}
+		}
+	}
+}

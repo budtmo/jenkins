@@ -12,6 +12,7 @@
  * 				- Scope: Global
  *				- Username: test
  *				- Password: secr3t
+ *				- ID: my-secret
  * 				- Description: this is an example
  */
 
@@ -28,7 +29,7 @@ properties([
 ])
 
 timestamps {
-	node {
+	node ('master'){
 		echo "Reload: ${params.RELOAD}"
 
 		def reloadOnly = params.RELOAD || currentBuild.number == 1
@@ -38,9 +39,19 @@ timestamps {
 		}
 
 		node("python") {
-			withCredentials([usernamePassword(credentialsId:'xxx-xxx-xxx-xxx', passwordVariable: 'Password', usernameVariable: 'Username')]) {
-    			echo "${Username}:${Password}"
-  			}
+			try {
+				stage("Get secret") {
+					withCredentials([usernamePassword(credentialsId:'my-secret', passwordVariable: 'Password', usernameVariable: 'Username')]) {
+						echo "${Username}:${Password}"
+					}
+				}
+			} 
+			catch (err) {
+				echo "error: " + err.getMessage()
+			}
+			finally {
+				echo "Send notification"
+			}
 		}
 	}	
 }
