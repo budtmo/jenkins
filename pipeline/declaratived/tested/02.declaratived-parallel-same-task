@@ -77,6 +77,29 @@ pipeline {
 								echo "Output: ${out_printenv}"
 							}
 						}
+
+						post {
+							always {
+								script {
+									echo "[${NODE}] Send notification"
+								}
+							}
+							success {
+								script {
+									echo "[${NODE}] Success"
+								}
+							}
+							failure {
+								script {
+									echo "[${NODE}] Failure"
+								}
+							}
+							unstable {
+								script {
+									echo "[${NODE}] Unstable"
+								}
+							}
+						}
 					}
 				}
 			}
