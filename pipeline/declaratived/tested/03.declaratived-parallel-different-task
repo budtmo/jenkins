@@ -1,0 +1,158 @@
+#!/usr/bin/groovy
+
+pipeline {
+	agent none
+
+	parameters {
+		booleanParam(
+			defaultValue: false,
+			description: 'Reload Jenkinsfile',
+			name: 'RELOAD'
+		)
+		string(
+			defaultValue: '',
+			description: 'Custom label for job build',
+			name: 'LABEL'
+		)
+	}
+
+	options {
+		timestamps()
+	}
+
+	stages {
+		stage("Initial") {
+			steps {
+				script {
+					echo "Reload: ${params.RELOAD}, Node: ${params.NODE}, Build label: ${params.LABEL}"
+
+					def reloadOnly = params.RELOAD || currentBuild.number == 1
+					if (reloadOnly) {
+						currentBuild.displayName = "Reload Jenkinsfile"
+					}
+				}
+			}
+		}
+
+		stage("Preparation") {
+			when {
+				beforeAgent true;
+				expression { !params.RELOAD.toBoolean() }
+			}
+
+			stages {
+				stage("Changing Label") {
+					steps {
+						script {
+							if (params.LABEL) {
+								currentBuild.displayName = "${params.LABEL}"
+							}		
+						}
+					}
+				}
+			}
+    	}
+
+    	stage("Parallel run") {
+			when {
+				beforeAgent true;
+				expression { !params.RELOAD.toBoolean() }
+			}
+
+			parallel {
+				stage("Run on Java Node") {
+					agent { label "java" }
+
+					steps {
+						script {
+							echo "this build is run on docker-java"
+							def output = sh(script: 'printenv | grep NODE_NAME', returnStdout:true).trim()
+							echo "Output: ${output}"
+						}
+					}
+
+					post {
+						always {
+							script {
+								echo "[Java] Send notification"
+							}
+						}
+						success {
+							script {
+								echo "[Java] Success"
+							}
+						}
+						failure {
+							script {
+								echo "[Java] Failure"
+							}
+						}
+						unstable {
+							script {
+								echo "[Java] Unstable"
+							}
+						}
+					}
+				}
+
+				stage("Run on Python Node") {
+					agent { label "python" }
+
+					steps {
+						script {
+							echo "this build is run on docker-python"
+							def output = sh(script: 'printenv | grep NODE_LABELS', returnStdout:true).trim()
+							echo "Output: ${output}"
+						}
+					}
+
+					post {
+						always {
+							script {
+								echo "[Python] Send notification"
+							}
+						}
+						success {
+							script {
+								echo "[Python] Success"
+							}
+						}
+						failure {
+							script {
+								echo "[Python] Failure"
+							}
+						}
+						unstable {
+							script {
+								echo "[Python] Unstable"
+							}
+						}
+					}
+				}
+			}
+    	}
+	}
+
+	post {
+		always {
+			script {
+				echo "Send notification"
+			}
+		}
+		success {
+			script {
+				echo "Success"
+			}
+		}
+		failure {
+			script {
+				echo "Failure"
+			}
+		}
+		unstable {
+			script {
+				echo "Unstable"
+			}
+		}
+	}
+}

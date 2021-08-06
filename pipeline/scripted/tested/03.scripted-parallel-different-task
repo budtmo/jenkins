@@ -1,0 +1,61 @@
+#!/usr/bin/groovy
+
+parameters = [
+	booleanParam(
+		defaultValue: false,
+		description: 'Reload Jenkinsfile',
+		name: 'RELOAD'
+	),
+	string(
+		defaultValue: '',
+		description: 'Custom label for job build',
+		name: 'LABEL'
+	)
+]
+
+properties([
+	parameters(parameters)
+])
+
+timestamps {
+	node ('master'){
+		echo "Reload: ${params.RELOAD}, Build label: ${params.LABEL}"
+
+		def reloadOnly = params.RELOAD || currentBuild.number == 1
+		if (reloadOnly) {
+			currentBuild.displayName = "Reload Jenkinsfile"
+			return
+		}
+
+		if (params.LABEL) {
+			currentBuild.displayName = "${params.LABEL}"
+		}
+
+		try {
+			stage("Parallel run") {
+				parallel(
+					"task1": {
+						node("java") {
+							echo "this build is run on docker-java"
+							def output = sh(script: 'printenv | grep NODE_NAME', returnStdout:true).trim()
+							echo "Output: ${output}"
+						}
+					},
+					"task2": {
+						node("python") {
+							echo "this build is run on docker-python"
+							def output = sh(script: 'printenv | grep NODE_LABELS', returnStdout:true).trim()
+							echo "Output: ${output}"
+						}
+					}
+				)
+			}
+				}
+		catch (err) {
+			echo "error: " + err.getMessage()
+		}
+		finally {
+			echo "Send notification"
+		}
+	}
+}
