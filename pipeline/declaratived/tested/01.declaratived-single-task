@@ -39,25 +39,41 @@ pipeline {
 			}
 		}
 		
-		stage("Node information and detect programming language") {
-			agent { label "${params.NODE}"}
-			
+		stage("Build") {
 			when {
 				beforeAgent true;
 				expression { !params.RELOAD.toBoolean() }
 			}
 
-			steps {
-				script {
-					if (params.LABEL) {
-						currentBuild.displayName = "${params.LABEL}"
+			agent { label "${params.NODE}"}
+
+			stages {
+				stage("Changing Label") {
+					steps {
+						script {
+							if (params.LABEL) {
+								currentBuild.displayName = "${params.LABEL}"
+							}		
+						}
 					}
+				}
 
-					def out_printenv = sh(script: 'printenv | grep NODE_NAME', returnStdout:true).trim()
-					echo "Output: ${out_printenv}"
+				stage("Node information") {
+					steps {
+						script {
+							def out_printenv = sh(script: 'printenv | grep NODE_NAME', returnStdout:true).trim()
+							echo "Output: ${out_printenv}"
+						}
+					}
+				}
+				stage("detect Programming language") {
+					steps {
+						script {
+							def out_python = sh(script: '${NODE} -h', returnStdout:true).trim()
+							echo "${out_python}"
+						}
 
-					def out_python = sh(script: '${NODE} -h', returnStdout:true).trim()
-					echo "${out_python}"
+					}
 				}
 			}
     	}
