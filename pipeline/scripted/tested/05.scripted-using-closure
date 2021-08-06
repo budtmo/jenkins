@@ -1,4 +1,5 @@
 #!/usr/bin/groovy
+
 parameters = [
 	booleanParam(
 		defaultValue: false,
@@ -17,8 +18,8 @@ properties([
 ])
 
 timestamps {
-	node {
-		echo "Reload: ${params.RELOAD}, Node: ${params.NODE}, Build label: ${params.LABEL}"
+	node ('master'){
+		echo "Reload: ${params.RELOAD}, Node: ${params.NODE}"
 
 		def reloadOnly = params.RELOAD || currentBuild.number == 1
 		if (reloadOnly) {
@@ -28,15 +29,23 @@ timestamps {
 
 		def selectedNode = params.NODE
 		node("${selectedNode}") {
-			stage("Checking the node") {
-				checkSomething("myString") {
-					if (selectedNode == "java") {
-						echo "This is java node"
-					} else {
-						echo "This is python node"
+			try {
+				stage("Checking the node") {
+					checkSomething("myString") {
+						if (selectedNode == "java") {
+							echo "This is java node"
+						} else {
+							echo "This is python node"
+						}
 					}
 				}
-	    	}
+			}
+			catch (err) {
+				echo "error: " + err.getMessage()
+			}
+			finally {
+				echo "Send notification"
+			}
 		}
 	}	
 }
