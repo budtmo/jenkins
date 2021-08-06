@@ -1,4 +1,5 @@
 #!/usr/bin/groovy
+
 parameters = [
 	booleanParam(
 		defaultValue: false,
@@ -17,7 +18,7 @@ properties([
 ])
 
 timestamps {
-	node {
+	node ('master'){
 		echo "Reload: ${params.RELOAD}, Build label: ${params.LABEL}"
 
 		def reloadOnly = params.RELOAD || currentBuild.number == 1
@@ -30,23 +31,31 @@ timestamps {
 			currentBuild.displayName = "${params.LABEL}"
 		}
 
-		stage("Parallel run") {
-			def labels = ['java', 'python']
-			def builders = [:]
+		try {
+			stage("Parallel run") {
+				def labels = ['java', 'python']
+				def builders = [:]
 
-			for (l in labels) {
-				def label = l //Need to bind in variable
+				for (l in labels) {
+					def label = l //Need to bind in variable
 
-				builders[label] = {
-					node(label) {
-						stage("Node information - ${label}") {
-							def output = sh(script: 'printenv | grep NODE_NAME', returnStdout:true).trim()
-							echo "Output: ${output}"
+					builders[label] = {
+						node(label) {
+							stage("Node information - ${label}") {
+								def out_printenv = sh(script: 'printenv | grep NODE_NAME', returnStdout:true).trim()
+								echo "Output: ${out_printenv}"
+							}
 						}
 					}
 				}
+				parallel builders
 			}
-			parallel builders
+		}
+		catch (err) {
+			echo "error: " + err.getMessage()
+		}
+		finally {
+			echo "Send notification"
 		}
 	}
 }
