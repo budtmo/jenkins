@@ -1,4 +1,5 @@
 #!/usr/bin/groovy
+
 parameters = [
 	booleanParam(
 		defaultValue: false,
@@ -22,7 +23,7 @@ properties([
 ])
 
 timestamps {
-	node {
+	node ('master'){
 		echo "Reload: ${params.RELOAD}, Node: ${params.NODE}, Build label: ${params.LABEL}"
 
 		def reloadOnly = params.RELOAD || currentBuild.number == 1
@@ -36,14 +37,23 @@ timestamps {
 		}
 
 		node("${params.NODE}") {
-			stage("Node information") {
-				def output = sh(script: 'printenv | grep NODE_NAME', returnStdout:true).trim()
-				echo "Output: ${output}"
-	    	}
-			stage("detect Programming language") {
-				def output = sh(script: '${NODE} -h', returnStdout:true).trim()
-				echo "${output}"
+			try {
+				stage("Node information") {
+					def out_printenv = sh(script: 'printenv | grep NODE_NAME', returnStdout:true).trim()
+					echo "Output: ${out_printenv}"
+				}
+				
+				stage("detect Programming language") {
+					def out_python = sh(script: '${NODE} -h', returnStdout:true).trim()
+					echo "${out_python}"
+				}
+			} 
+			catch (err) {
+				echo "error: " + err.getMessage()
+			}
+			finally {
+				echo "Send notification"
 			}
 		}
-	}	
+	}
 }

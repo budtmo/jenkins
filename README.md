@@ -10,7 +10,7 @@ Start Jenkins Master
 --------------------
 1. Run Jenkins machine through docker-compose
 	
-	```bash
+	```
 	$docker-compose up
 	```
 
@@ -27,7 +27,7 @@ You are able to have a Jenkins slave(s) / node(s) on demand through docker.
 
 1. Enable Docker Engine API on the machine which has Docker installed. Example steps on Ubuntu 16.04:
 
-	```bash
+	```
 	sudo nano /lib/systemd/system/docker.service
 	Replace with -> ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:4243
 	sudo systemctl daemon-reload
@@ -39,7 +39,7 @@ You are able to have a Jenkins slave(s) / node(s) on demand through docker.
 
 3. Configure the connection between jenkins master and Docker machine (under Manage Jenkins -> Configure System -> Cloud). Sample configuration:
 
-	```bash
+	```
 	Name: cloud1
 	Docker Host URI: tcp://xxx.xxx.xxx.xxx:xxx
 	Enabled: true
@@ -47,7 +47,7 @@ You are able to have a Jenkins slave(s) / node(s) on demand through docker.
 
 4. Configure Docker agent template in the same page. Sample configuration:
 	
-	```bash
+	```
 	Label: java
 	Enabled: true
 	Name: docker-openjdk

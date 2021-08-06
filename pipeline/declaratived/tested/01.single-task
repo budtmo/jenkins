@@ -1,0 +1,83 @@
+#!/usr/bin/groovy
+
+pipeline {
+	agent none
+
+	parameters {
+		booleanParam(
+			defaultValue: false,
+			description: 'Reload Jenkinsfile',
+			name: 'RELOAD'
+		)
+		choice(
+			choices: 'java\npython',
+			description: 'Available node',
+			name: 'NODE'
+		)
+		string(
+			defaultValue: '',
+			description: 'Custom label for job build',
+			name: 'LABEL'
+		)
+	}
+
+	options {
+		timestamps()
+	}
+
+	stages {
+		stage("Initial") {
+			steps {
+				script {
+					echo "Reload: ${params.RELOAD}, Node: ${params.NODE}, Build label: ${params.LABEL}"
+
+					if (params.LABEL) {
+						currentBuild.displayName = "${params.LABEL}"
+					}
+				}
+			}
+		}
+		
+		stage("Node information and detect programming language") {
+			agent { label "${params.NODE}"}
+			
+			when {
+				beforeAgent true;
+				expression { !params.RELOAD.toBoolean() }
+			}
+
+			steps {
+				script {
+					def out_printenv = sh(script: 'printenv | grep NODE_NAME', returnStdout:true).trim()
+					echo "Output: ${out_printenv}"
+
+					def out_python = sh(script: '${NODE} -h', returnStdout:true).trim()
+					echo "${out_python}"
+				}
+			}
+    	}
+	}
+
+	post {
+		always {
+			script {
+				echo "Send notification"
+			}
+		}
+		success {
+			script {
+				echo "Success"
+			}
+		}
+		failure {
+			script {
+				echo "Failure"
+			}
+		}
+		unstable {
+			script {
+				echo "Unstable"
+			}
+		}
+	}
+}
