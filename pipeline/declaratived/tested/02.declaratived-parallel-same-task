@@ -53,7 +53,7 @@ pipeline {
 			}
     	}
 
-    	stage("Build") {
+    	stage("Parallel run") {
 			when {
 				beforeAgent true;
 				expression { !params.RELOAD.toBoolean() }
