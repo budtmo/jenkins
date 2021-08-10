@@ -1,0 +1,86 @@
+#!/usr/bin/groovy
+
+/**
+ * Add this repo to Jenkins setting first -> https://github.com/budtmo/jenkins-shared-library
+ * Add @xxx if you want to use custom branch (in this case: master), remove it if you want to use the default branch (master)
+ */
+
+ @Library("test-library@master") _
+
+pipeline {
+	agent none
+
+	parameters {
+		booleanParam(
+			defaultValue: false,
+			description: 'Reload Jenkinsfile',
+			name: 'RELOAD'
+		)
+	}
+
+	options {
+		timestamps()
+	}
+
+	stages {
+		stage("Initial") {
+			steps {
+				script {
+					echo "Reload: ${params.RELOAD}, Node: ${params.NODE}"
+
+					def reloadOnly = params.RELOAD || currentBuild.number == 1
+					if (reloadOnly) {
+						currentBuild.displayName = "Reload Jenkinsfile"
+					}
+				}
+			}
+		}
+		
+		stage("Build") {
+			when {
+				beforeAgent true;
+				expression { !params.RELOAD.toBoolean() }
+			}
+
+			agent { label "python"}
+
+			stages {
+				stage("Read Library") {
+					steps {
+						script {
+							def f = new Foo("foo1")
+							log.printFooName(f)
+
+							def b = new org.op.Bar(this, new Foo("foo2"))
+							b.printInfo("just a message")
+							log.printMessage(b.getFoo().getName())
+						}
+					}
+				}
+			}
+    	}
+	}
+
+	post {
+		always {
+			script {
+				echo "Send notification"
+			}
+		}
+		success {
+			script {
+				echo "Success"
+			}
+		}
+		failure {
+			script {
+				echo "Failure"
+			}
+		}
+		unstable {
+			script {
+				echo "Unstable"
+			}
+		}
+	}
+}

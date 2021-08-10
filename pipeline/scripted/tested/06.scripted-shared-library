@@ -20,7 +20,7 @@ properties([
 ])
 
 timestamps {
-	node {
+	node ('master'){
 		echo "Reload: ${params.RELOAD}"
 
 		def reloadOnly = params.RELOAD || currentBuild.number == 1
